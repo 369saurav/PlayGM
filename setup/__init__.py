@@ -373,8 +373,8 @@ def store_in_database(player_name, player_rating, opponent_rating, opponent_name
                             opponent_fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
                             players_fen = str(fen)
                             fen_embedding = str(generate_embedding(opponent_fen))
-
-                        continue
+                        else:
+                            continue
                     else:
                         # "blacks move"
                         if len(positions) == i+1:
