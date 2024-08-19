@@ -26,3 +26,14 @@ CREATE TABLE IF NOT EXISTS `chess_eco` (
                   `eco` char(5),
                   `eco_name` varchar(50)
                 );
+
+
+CREATE TABLE IF NOT EXISTS `chess_positions` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `game_id` INT NOT NULL,
+  `player_color` char(1),
+  `player_fen` VARCHAR(100),
+  `opponent_fen` VARCHAR(100),
+  `move_number` INT NOT NULL,
+  `embedding` vector(384)
+);

@@ -362,16 +362,50 @@ def store_in_database(player_name, player_rating, opponent_rating, opponent_name
             # Insert position data
             for_counter = 0
             for i ,fen in enumerate(positions):
+                players_fen = ''
+                opponent_fen = ''
+                fen_embedding = ''
                 for_counter += 1
-                print("for_counter::: "+str(for_counter))
-                fen_embedding = generate_embedding(fen)
+                print("i::: "+str(i))
+                if player_color == 'W':
+                    if i%2 == 0:
+                        if i == 0:
+                            opponent_fen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+                            players_fen = str(fen)
+                            fen_embedding = str(generate_embedding(opponent_fen))
+
+                        continue
+                    else:
+                        # "blacks move"
+                        if len(positions) == i+1:
+                            players_fen = ''
+                            opponent_fen = str(fen)
+                            fen_embedding = str(generate_embedding(opponent_fen))
+                        else:
+                            opponent_fen = str(fen)
+                            players_fen = str(positions[i+1])
+                            fen_embedding = str(generate_embedding(opponent_fen))
+
+                elif player_color == 'B':
+                    if i%2 == 0:
+                        # "whites move"
+                        if len(positions) == i+1:
+                            players_fen = ''
+                            opponent_fen = str(fen)
+                            fen_embedding = str(generate_embedding(opponent_fen))
+                        else:
+                            opponent_fen = str(fen)
+                            players_fen = str(positions[i+1])
+                            fen_embedding = str(generate_embedding(opponent_fen))
+                    else:
+                        continue
+
+                # print("for_counter::: "+str(for_counter))
                 print("fen_embedding::: "+str(fen_embedding))
                 cursor.execute("""
-                   INSERT INTO chess_positions (game_id, fen, next_move , move_number, embedding)
-                   VALUES (%s, %s, %s, %s, %s)
-                   """, (game_id, fen,'dummy', i + 1, str(fen_embedding)))
-                i+=1
-                break
+                   INSERT INTO `chess_positions` (`game_id`,`player_color`,`player_fen`,`opponent_fen`,`move_number`,`embedding`) VALUES (%s, %s, %s, %s, %s, %s)
+
+                   """, (game_id,player_color, players_fen, opponent_fen, i + 1, str(fen_embedding)))
 
             update_chess_365_status_query = """
             UPDATE `chess_365_data_status`
@@ -379,7 +413,6 @@ def store_in_database(player_name, player_rating, opponent_rating, opponent_name
               `last_record_inserted` = %s, `last_record_page_url` = %s, `last_record_pgn_url` = %s WHERE `id` = 1"""
             cursor.execute(update_chess_365_status_query,(chess_365_row_number,last_record_page_url,last_record_pgn_url))
             connection.commit()
-
 
         except mysql.connector.Error as error:
             print(f"Error creating table: {error}")
