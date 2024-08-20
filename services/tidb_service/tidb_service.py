@@ -24,28 +24,28 @@ def get_db_connection():
 
 
 def similarity_search(embedding, limit=5):
+    global similarity_search_cursor
     connection = get_db_connection()
     results = []
     if connection:
         try:
-            cursor = connection.cursor(dictionary=True)
+            similarity_search_cursor = connection.cursor(dictionary=True)
 
             query = """
-            SELECT id, player_name, opponent_name, game_date, player_piece_color, chess_annotation,
-                   embedding <=> %s AS distance
-            FROM chess_games
-            ORDER BY embedding <=> %s
-            LIMIT %s
+                SELECT player_fen, move_number
+                FROM chess_positions
+                ORDER BY Vec_Cosine_Distance(embedding, %s)
+                LIMIT %s
             """
 
-            cursor.execute(query, (embedding, embedding, limit))
-            results = cursor.fetchall()
+            similarity_search_cursor.execute(query, (embedding, limit))
+            results = similarity_search_cursor.fetchall()
 
         except Error as error:
             print(f"Error executing query: {error}")
         finally:
             if connection.is_connected():
-                cursor.close()
+                similarity_search_cursor.close()
                 connection.close()
 
     return results

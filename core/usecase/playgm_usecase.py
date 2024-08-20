@@ -10,6 +10,6 @@ class PlaygmUsecase:
 
 
     def  make_next_move(data):
-        embedded_data = get_embedding(data.annotation)
+        embedded_data = get_embedding(data.fen)
         similar_games = similarity_search(embedded_data)
         return
