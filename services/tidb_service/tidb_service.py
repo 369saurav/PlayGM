@@ -20,7 +20,7 @@ def get_db_connection():
         return None
 
 
-def similarity_search(embedding, limit=5):
+def similarity_search(embedding, limit=10):
     global similarity_search_cursor
     connection = get_db_connection()
     results = []

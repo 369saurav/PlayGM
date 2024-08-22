@@ -10,11 +10,11 @@ services:
     volumes:
       - ./PlayGm:/app
 
-  frontend:
-    build:
-      context: ./play-gm-frontend
-      dockerfile: Dockerfile
-    ports:
-      - "80:80"
-    depends_on:
-      - backend
+#  frontend:
+#    build:
+#      context: ./play-gm-frontend
+#      dockerfile: Dockerfile
+#    ports:
+#      - "80:80"
+#    depends_on:
+#      - backend

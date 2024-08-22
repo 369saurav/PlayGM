@@ -19,63 +19,82 @@ def start_game(data):
     return
 
 
-def make_next_move(fen, move_number, player_name, player_colour):
+def evaluate_move_with_stockfish(board, move, stockfish_path):
+    # Create a copy of the board and apply the move
+    test_board = board.copy()
+    test_board.push(move)
+
+    try:
+        with chess.engine.SimpleEngine.popen_uci(stockfish_path) as engine:
+            # Evaluate the position after making the move
+            evaluation = engine.analyse(test_board, chess.engine.Limit(time=2.0))
+            score = evaluation["score"].relative.score(mate_score=10000)
+            print(f"Move: {move}, Score: {score}")
+            return score
+    except Exception as e:
+        print(f"An error occurred during Stockfish evaluation: {e}")
+        return None
+
+
+def make_next_move(fen, move_number, player_name,player_colour):
     embedded_data = get_embedding(fen)
     print(str(embedded_data))
-    generate_response(fen)
     similar_games = similarity_search(str(embedded_data))
-    print("Similar_games::: "+str(similar_games))
-    print("fen:: "+fen)
+    print("Similar_games::: " + str(similar_games))
+    print("fen:: " + fen)
+    stockfish_path = "D:/stockfish-windows-x86-64-avx2/stockfish/stockfish-windows-x86-64-avx2.exe"
+
     chess_board = chess.Board(fen)
     if chess_board.is_game_over():
-        if chess_board.is_fifty_moves():
-            print("Draw by fifty-move rule")
-        elif chess_board.is_stalemate():
-            print("Draw by stalemate")
-        elif chess_board.can_claim_threefold_repetition():
-            print("Draw by threefold repetition")
-        elif chess_board.is_insufficient_material():
-            print("Draw by insufficient material")
-        else:
-            print("Game over")
-    else:
-        # Generate a list of legal moves
-        legal_moves = list(chess_board.legal_moves)
-        fen_moves = []
-        for similar_fen in similar_games:
-            fen_move = fen_to_move(similar_fen['opponent_fen'],similar_fen['player_fen'])
-            print("fen_move::: "+str(fen_move))
+        handle_game_over(chess_board)
+        return None
+
+    legal_moves = list(chess_board.legal_moves)
+    fen_moves = []
+
+    for similar_fen in similar_games:
+        fen_move = fen_to_move(similar_fen['opponent_fen'], similar_fen['player_fen'])
+        if fen_move in legal_moves:
             fen_moves.append(fen_move)
 
+    selected_move = None
+    best_score = None
+
+    if fen_moves:
+        # Derive player's color from the FEN
+        is_white_turn = fen.split(' ')[1] == 'w'  # True if it's White's turn, otherwise False
+
+        for fen_move in fen_moves:
+            score = evaluate_move_with_stockfish(chess_board, fen_move, stockfish_path)
+
+            is_good_move = (is_white_turn and score > -50) or (not is_white_turn and score < 50)
+
+            # Update the best move if the current move is better
+            if best_score is None and is_good_move or (score is not None and is_good_move and (
+                    best_score is None or (is_white_turn and score > best_score) or (
+                    not is_white_turn and score < best_score))):
+                best_score = score
+                selected_move = fen_move
+                print(f"New best move found: {selected_move} with score {best_score}")
+
+    if not selected_move:
+        selected_move = fen_to_move(fen,generate_response(fen))
+        print("Fallback to Stockfish:", selected_move)
+
+    return selected_move
 
 
-        print(str(legal_moves))
-
-        if legal_moves:
-            return fen_to_move(fen,generate_response(fen))
-
-            # For demonstration, let's just use the first legal move
-            # for m in fen_moves:
-            #     if chess_board.is_legal(m):
-            #         n_fen = chess_board.fen()
-            #         print(f"New position from similar games: {n_fen}")
-            #         return m
-            #
-            # move = legal_moves[0]
-            # if chess_board.is_legal(move):
-            #     print(f"Legal move: {move}")
-            #     # Make the move
-            #     chess_board.push(move)
-            #     # Get the new FEN after the move
-            #     new_fen = chess_board.fen()
-            #     print(f"New position: {new_fen}")
-            #     return move
-            # else:
-            #     print("No legal moves available")
-
-
-    return
-
+def handle_game_over(chess_board):
+    if chess_board.is_fifty_moves():
+        print("Draw by fifty-move rule")
+    elif chess_board.is_stalemate():
+        print("Draw by stalemate")
+    elif chess_board.can_claim_threefold_repetition():
+        print("Draw by threefold repetition")
+    elif chess_board.is_insufficient_material():
+        print("Draw by insufficient material")
+    else:
+        print("Game over")
 
 def fen_to_move(from_fen , to_fen):
     board1 = chess.Board(from_fen)
@@ -164,7 +183,7 @@ def generate_response(current_fen):
     # Use a context manager to open and close the Stockfish engine
     try:
         with chess.engine.SimpleEngine.popen_uci(stockfish_path) as engine:
-            result = engine.play(board, chess.engine.Limit(time=2.0))
+            result = engine.play(board, chess.engine.Limit(time=5.0))
             best_move = result.move
     except Exception as e:
         print(f"An error occurred while running Stockfish: {e}")
