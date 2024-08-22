@@ -1,8 +1,5 @@
-from flask import Flask, request, jsonify
 import mysql.connector
 from mysql.connector import Error
-
-app = Flask(__name__)
 
 # Database connection function
 def get_db_connection():
@@ -12,7 +9,7 @@ def get_db_connection():
             port=4000,
             user="3CHjZydnDAbyLy6.root",
             password="LJIBsOyh00RIQLC0",
-            database="test",
+            database="play_gm",
             ssl_ca="isrgrootx1.pem",
             ssl_verify_cert=True,
             ssl_verify_identity=True
@@ -32,7 +29,7 @@ def similarity_search(embedding, limit=5):
             similarity_search_cursor = connection.cursor(dictionary=True)
 
             query = """
-                SELECT player_fen, move_number
+                SELECT player_fen, opponent_fen, move_number
                 FROM chess_positions
                 ORDER BY Vec_Cosine_Distance(embedding, %s)
                 LIMIT %s
@@ -49,5 +46,3 @@ def similarity_search(embedding, limit=5):
                 connection.close()
 
     return results
-
-
