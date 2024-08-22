@@ -1,26 +1,14 @@
-from operator import index
-
 import requests
-from bs4 import BeautifulSoup
 import chess
 import chess.pgn
 import io
 import mysql.connector
-from flask import jsonify
 from sentence_transformers import SentenceTransformer
 from bs4 import BeautifulSoup
-import time
-import random
-import json
 import re
 from datetime import datetime
-from mysql.connector import Error
+from  mysql.connector import Error
 
-from app import create_table
-from main import embedding
-import os
-from tidb_vector.integrations import TiDBVectorClient
-from dotenv import load_dotenv
 
 
 # # Function to scrape PGN data from a website

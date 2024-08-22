@@ -1,14 +1,6 @@
 from flask import Flask, request, jsonify
-import services.embedding_service.create_embedding
 from flask_cors import CORS  # Import Flask-CORS
-
-import mysql.connector
-from mysql.connector import Error
-
 from core.usecase.playgm_usecase import *
-from services.embedding_service.create_embedding import get_embedding
-from services.tidb_service.tidb_service import similarity_search
-
 main_router = Flask(__name__)
 
 

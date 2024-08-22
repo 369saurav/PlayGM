@@ -13,14 +13,6 @@ CREATE TABLE IF NOT EXISTS `chess_games_data` (
                   `location` VARCHAR(25)
                 );
 
-CREATE TABLE IF NOT EXISTS `chess_positions` (
-                  `id` INT PRIMARY KEY AUTO_INCREMENT,
-                  `game_id` INT NOT NULL,
-                  `fen` VARCHAR(100) NOT NULL,
-                  `next_move` VARCHAR(10) NOT NULL,
-                  `move_number` INT NOT NULL,
-                  `embedding` vector(384) COMMENT "hnsw(distance=cosine)"
-                );
 CREATE TABLE IF NOT EXISTS `chess_eco` (
                   `id` INT PRIMARY KEY AUTO_INCREMENT,
                   `eco` char(5),
