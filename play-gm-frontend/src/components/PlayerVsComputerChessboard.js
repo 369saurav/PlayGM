@@ -57,7 +57,7 @@ const PlayerVsComputerChessboard = ({ selectedPlayer, selectedColor, reset, onMo
   if (move) {
     setGame(new Chess(game.fen()));
     setFen(game.fen());
-    onMove(`${move.from}-${move.to}`); // Format user move as "e2-e4"
+    onMove(`${move.from}${move.to}`); // Format user move as "e2-e4"
     return true;
   }
   return false;

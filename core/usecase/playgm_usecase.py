@@ -19,6 +19,10 @@ def start_game(data):
     return
 
 
+import chess
+import chess.engine
+
+
 def evaluate_move_with_stockfish(board, move, stockfish_path):
     # Create a copy of the board and apply the move
     test_board = board.copy()
@@ -36,7 +40,7 @@ def evaluate_move_with_stockfish(board, move, stockfish_path):
         return None
 
 
-def make_next_move(fen, move_number, player_name,player_colour):
+def make_next_move(fen, move_numbe,player_colour, player_namer):
     embedded_data = get_embedding(fen)
     print(str(embedded_data))
     similar_games = similarity_search(str(embedded_data))
@@ -45,9 +49,10 @@ def make_next_move(fen, move_number, player_name,player_colour):
     stockfish_path = "D:/stockfish-windows-x86-64-avx2/stockfish/stockfish-windows-x86-64-avx2.exe"
 
     chess_board = chess.Board(fen)
+
+    # Check for game over scenarios
     if chess_board.is_game_over():
-        handle_game_over(chess_board)
-        return None
+        return handle_game_over(chess_board)
 
     legal_moves = list(chess_board.legal_moves)
     fen_moves = []
@@ -60,17 +65,30 @@ def make_next_move(fen, move_number, player_name,player_colour):
     selected_move = None
     best_score = None
 
-    if fen_moves:
-        # Derive player's color from the FEN
-        is_white_turn = fen.split(' ')[1] == 'w'  # True if it's White's turn, otherwise False
+    # Determine if it's White's turn based on the FEN
+    is_white_turn = fen.split(' ')[1] == 'w'
 
+    # Evaluate the current board state to determine the dynamic threshold
+    try:
+        with chess.engine.SimpleEngine.popen_uci(stockfish_path) as engine:
+            evaluation = engine.analyse(chess_board, chess.engine.Limit(time=5.0))
+            current_score = evaluation["score"].relative.score(mate_score=10000)
+            print(f"Current board score: {current_score}")
+    except Exception as e:
+        print(f"An error occurred during Stockfish evaluation: {e}")
+        current_score = 0  # Fallback to neutral if evaluation fails
+
+    # Adjust the threshold based on the current position
+    threshold = current_score - 50 if is_white_turn else current_score + 50
+
+    if fen_moves:
         for fen_move in fen_moves:
             score = evaluate_move_with_stockfish(chess_board, fen_move, stockfish_path)
 
-            is_good_move = (is_white_turn and score > -50) or (not is_white_turn and score < 50)
+            # Adjust the condition to consider a good move dynamically based on the current board state
+            is_good_move = (is_white_turn and score > threshold) or (not is_white_turn and score < threshold)
 
-            # Update the best move if the current move is better
-            if best_score is None and is_good_move or (score is not None and is_good_move and (
+            if best_score is None or (score is not None and is_good_move and (
                     best_score is None or (is_white_turn and score > best_score) or (
                     not is_white_turn and score < best_score))):
                 best_score = score
@@ -78,23 +96,26 @@ def make_next_move(fen, move_number, player_name,player_colour):
                 print(f"New best move found: {selected_move} with score {best_score}")
 
     if not selected_move:
-        selected_move = fen_to_move(fen,generate_response(fen))
+        selected_move = fen_to_move(fen, generate_response(fen))
         print("Fallback to Stockfish:", selected_move)
 
     return selected_move
 
 
 def handle_game_over(chess_board):
-    if chess_board.is_fifty_moves():
-        print("Draw by fifty-move rule")
+    if chess_board.is_checkmate():
+        return "0-1" if chess_board.turn == chess.WHITE else "1-0"
     elif chess_board.is_stalemate():
-        print("Draw by stalemate")
+        return "D"  # Draw by stalemate
+    elif chess_board.is_fifty_moves():
+        return "D"  # Draw by fifty-move rule
     elif chess_board.can_claim_threefold_repetition():
-        print("Draw by threefold repetition")
+        return "D"  # Draw by threefold repetition
     elif chess_board.is_insufficient_material():
-        print("Draw by insufficient material")
+        return "D"  # Draw by insufficient material
     else:
-        print("Game over")
+        return "Game Over"
+
 
 def fen_to_move(from_fen , to_fen):
     board1 = chess.Board(from_fen)
