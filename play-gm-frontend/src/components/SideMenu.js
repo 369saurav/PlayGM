@@ -1,13 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ResultModal, ConfirmationModal } from "./Modal"; // Import the modals
+import axios from 'axios'; // Import axios for API requests
 
 const SideMenu = ({ onStartGame, onReset, gameStarted, notation }) => {
-  const [selectedPlayer, setSelectedPlayer] = useState("Magnus Carlsen");
+  const [selectedPlayer, setSelectedPlayer] = useState("");
   const [selectedColor, setSelectedColor] = useState("W");
+  const [players, setPlayers] = useState([]); // State to store the list of players
   const [isResultModalOpen, setIsResultModalOpen] = useState(false);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [resultMessage, setResultMessage] = useState('');
   const [score, setScore] = useState('');
+
+  useEffect(() => {
+    // Fetch the list of players from the API when the component mounts
+    axios.get('http://localhost:5000/playgm/players')
+      .then(response => {
+        console.log("API Response:", response.data); // Debugging line
+        // Parse and set the players list
+        const playersList = JSON.parse(response.data.players_list.replace(/'/g, '"'));
+        console.log("Parsed Players List:", playersList); // Debugging line
+        setPlayers(playersList);
+      })
+      .catch(error => {
+        console.error("Error fetching players list:", error);
+      });
+  }, []);
 
   const handleStartGame = () => {
     onStartGame(selectedPlayer, selectedColor);
@@ -42,7 +59,7 @@ const SideMenu = ({ onStartGame, onReset, gameStarted, notation }) => {
   return (
     <div className="w-[52%] mt-10">
       <form className="max-w-sm mx-auto">
-        <label className="block mb-2 text-sm font-medium text--dark_green dark:text-dark_green">
+        <label className="block mb-2 text-sm font-medium text-dark_green dark:text-dark_green">
           Choose a Player
         </label>
         <select
@@ -52,8 +69,13 @@ const SideMenu = ({ onStartGame, onReset, gameStarted, notation }) => {
           onChange={(e) => setSelectedPlayer(e.target.value)}
           disabled={gameStarted} // Disable dropdown if game has started
         >
-          <option value="Magnus Carlsen">Magnus Carlsen</option>
-          {/* Add more players here */}
+          {players.length > 0 ? (
+            players.map((player, index) => (
+              <option key={index} value={player}>{player}</option>
+            ))
+          ) : (
+            <option value="" disabled>Loading players...</option>
+          )}
         </select>
       </form>
 

@@ -17,12 +17,9 @@ def start_game():
 def players_move():
     request_body = request.json
     fen = request_body['fen']
-    # move_number = int(request_body['move_number'])
-    # player_name = request_body['player_name']
-    # player_colour = request_body['player_colour']
-    usecase_parameter = (fen,'move_number','player_colour','player_colour')
-    # pl = PlaygmUsecase()
-    next_move = make_next_move(fen,'move_number','player_colour','player_colour')
+    player_name = request_body['player_name']
+    print("player_name from request::: "+player_name)
+    next_move = make_next_move(fen,player_name)
     print("next MOVE::: "+str(next_move))
     if next_move is None:
         return jsonify({"message": "Failed!","next_move":None}), 400

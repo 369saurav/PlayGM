@@ -40,10 +40,10 @@ def evaluate_move_with_stockfish(board, move, stockfish_path):
         return None
 
 
-def make_next_move(fen, move_number, player_colour, player_namer):
+def make_next_move(fen, player_name):
     embedded_data = get_embedding(fen)
     print(str(embedded_data))
-    similar_games = similarity_search(str(embedded_data))
+    similar_games = similarity_search(str(embedded_data),str(player_name))
     print("Similar_games::: " + str(similar_games))
     print("fen:: " + fen)
     # stockfish_path = "D:/stockfish-windows-x86-64-avx2/stockfish/stockfish-windows-x86-64-avx2.exe"

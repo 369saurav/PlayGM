@@ -27,7 +27,7 @@ const PlayerVsComputerChessboard = ({ selectedPlayer, selectedColor, reset, onMo
       setIsThinking(true); // Start thinking animation
 
       try {
-        const response = await axios.post('http://127.0.0.1:5000/playgm/move', { fen: game.fen() });
+        const response = await axios.post('http://127.0.0.1:5000/playgm/move', { fen: game.fen(), player_name: selectedPlayer});
         const computerMove = response.data.move;
         setIsThinking(false); // Stop thinking animation
         if (computerMove == '0-1') {
