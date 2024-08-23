@@ -47,7 +47,7 @@ def make_next_move(fen, move_number, player_colour, player_namer):
     print("Similar_games::: " + str(similar_games))
     print("fen:: " + fen)
     stockfish_path = "D:/stockfish-windows-x86-64-avx2/stockfish/stockfish-windows-x86-64-avx2.exe"
-
+    stock_fish_docker_path = "stockfish"
     chess_board = chess.Board(fen)
 
     # Check for game over scenarios
@@ -70,7 +70,7 @@ def make_next_move(fen, move_number, player_colour, player_namer):
 
     # Evaluate the current board state to determine the dynamic threshold
     try:
-        with chess.engine.SimpleEngine.popen_uci(stockfish_path) as engine:
+        with chess.engine.SimpleEngine.popen_uci(stock_fish_docker_path) as engine:
             evaluation = engine.analyse(chess_board, chess.engine.Limit(time=5.0))
             current_score = evaluation["score"].relative.score(mate_score=10000)
             print(f"Current board score: {current_score}")
@@ -83,7 +83,7 @@ def make_next_move(fen, move_number, player_colour, player_namer):
 
     if fen_moves:
         for fen_move in fen_moves:
-            score = evaluate_move_with_stockfish(chess_board, fen_move, stockfish_path)
+            score = evaluate_move_with_stockfish(chess_board, fen_move, stock_fish_docker_path)
 
             # Adjust the condition to consider a good move dynamically based on the current board state
             is_good_move = (is_white_turn and score > threshold) or (not is_white_turn and score < threshold)
@@ -210,10 +210,10 @@ def generate_response(current_fen):
 
     # Define the path to the Stockfish executable
     stockfish_path = "D:/stockfish-windows-x86-64-avx2/stockfish/stockfish-windows-x86-64-avx2.exe"
-
+    stock_fish_docker_path = "stockfish"
     # Use a context manager to open and close the Stockfish engine
     try:
-        with chess.engine.SimpleEngine.popen_uci(stockfish_path) as engine:
+        with chess.engine.SimpleEngine.popen_uci(stock_fish_docker_path) as engine:
             result = engine.play(board, chess.engine.Limit(time=5.0))
             best_move = result.move
     except Exception as e:
