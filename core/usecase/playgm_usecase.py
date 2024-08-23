@@ -5,7 +5,7 @@
 # from langchain_google_genai import ChatGoogleGenerativeAI
 
 from services.embedding_service.create_embedding import get_embedding
-from services.tidb_service.tidb_service import similarity_search, get_all_players
+from services.tidb_service.tidb_service import similarity_search, get_all_players, get_player_id
 import chess
 import chess.engine
 

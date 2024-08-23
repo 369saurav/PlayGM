@@ -27,7 +27,8 @@ CREATE TABLE IF NOT EXISTS `chess_positions` (
   `player_fen` VARCHAR(100),
   `opponent_fen` VARCHAR(100),
   `move_number` INT NOT NULL,
-  `embedding` vector(384) COMMENT "hnsw(distance=cosine)"
+  `embedding` vector(384) COMMENT "hnsw(distance=cosine)",
+  `player_id` INT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS `chess_players` (

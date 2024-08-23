@@ -1,5 +1,7 @@
 import mysql.connector
 from mysql.connector import Error
+from sympy import partition
+
 
 # Database connection function
 def get_db_connection():
@@ -20,21 +22,25 @@ def get_db_connection():
         return None
 
 
-def similarity_search(embedding,player_name, limit=5):
+def similarity_search(embedding, player_name, limit=5):
     global similarity_search_cursor
     connection = get_db_connection()
     results = []
+    partition_name = "p" + str(get_player_id(player_name))
+    print(str(partition_name))
     if connection:
         try:
             similarity_search_cursor = connection.cursor(dictionary=True)
 
-            query = """
+            # Correct query string with formatted partition name and placeholders for parameters
+            query = f"""
                 SELECT player_fen, opponent_fen, move_number
-                FROM chess_positions
+                FROM chess_positions PARTITION ({partition_name})
                 ORDER BY Vec_Cosine_Distance(embedding, %s)
                 LIMIT %s
             """
 
+            # Use the embedding and limit as parameters
             similarity_search_cursor.execute(query, (embedding, limit))
             results = similarity_search_cursor.fetchall()
 
@@ -72,3 +78,24 @@ def get_all_players():
                 connection.close()
 
     return results
+
+def get_player_id(player_name):
+    connection = None
+    cursor = None
+    result = None
+    try:
+        connection = get_db_connection()
+        if connection and connection.is_connected():
+            cursor = connection.cursor(dictionary=True)
+            query = "SELECT id FROM chess_players WHERE player_name = %s"
+            cursor.execute(query, (player_name,))
+            result = cursor.fetchone()
+    except Error as error:
+        print(f"Error executing query: {error}")
+    finally:
+        if cursor:
+            cursor.close()
+        if connection and connection.is_connected():
+            connection.close()
+    return result['id'] if result else None
+
