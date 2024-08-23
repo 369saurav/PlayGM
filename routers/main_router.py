@@ -1,3 +1,5 @@
+from crypt import methods
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS  # Import Flask-CORS
 from core.usecase.playgm_usecase import *
@@ -27,7 +29,10 @@ def players_move():
     else:
         return jsonify({"move":str(next_move)}), 201
 
-
+@main_router.route('/playgm/players', methods=['GET'])
+def get_players_list():
+    player_list = fetch_all_players()
+    return jsonify({"players_list":str(player_list)}), 200
 
 # @main_router.route('/playgm/move', methods=['GET'])
 # def players_move():
@@ -73,4 +78,4 @@ CORS(main_router)  # Enable CORS for all routes
 #         return jsonify({"move": str(next_move)}), 200
 
 if __name__ == '__main__':
-    main_router.run(host='0.0.0.0',port=5000)
+    main_router.run(host='0.0.0.0',port=5000, debug=True)

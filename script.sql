@@ -29,3 +29,9 @@ CREATE TABLE IF NOT EXISTS `chess_positions` (
   `move_number` INT NOT NULL,
   `embedding` vector(384) COMMENT "hnsw(distance=cosine)"
 );
+
+CREATE TABLE IF NOT EXISTS `chess_players` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `player_name` VARCHAR(50) NOT NULL,
+  `player_display_name` VARCHAR(50)
+    );

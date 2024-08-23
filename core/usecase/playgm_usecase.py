@@ -5,7 +5,7 @@
 # from langchain_google_genai import ChatGoogleGenerativeAI
 
 from services.embedding_service.create_embedding import get_embedding
-from services.tidb_service.tidb_service import similarity_search
+from services.tidb_service.tidb_service import similarity_search, get_all_players
 import chess
 import chess.engine
 
@@ -143,6 +143,15 @@ def fen_to_move(from_fen , to_fen):
             return move
 
 
+
+def fetch_all_players():
+    player_result = get_all_players()
+
+    player_list = []
+    for r in player_result:
+        player_list.append(r.get('player_name'))
+
+    return player_list
 
     # def is_move_legal(self,opponent_fen, your_fen):
     #     # Create board from opponent's FEN

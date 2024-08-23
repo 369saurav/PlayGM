@@ -279,7 +279,7 @@ def pgn_to_fen_positions(pgn_string):
 
 # Function to generate embedding for a FEN position
 def generate_embedding(fen):
-    model = SentenceTransformer('all-MiniLM-L6-v2')
+    model = SentenceTransformer('all-MiniLM-L6-v2', device='cpu')
     generated_embedding = model.encode(fen)
     return generated_embedding.tolist()  # Convert numpy array to list
 
@@ -298,7 +298,7 @@ def get_db_connection():
             host="gateway01.ap-southeast-1.prod.aws.tidbcloud.com",
             port=4000,
             user="3CHjZydnDAbyLy6.root",
-            password="<PASSWORD>",
+            password="LJIBsOyh00RIQLC0",
             database="play_gm",
             ssl_ca="isrgrootx1.pem",
             ssl_verify_cert=True,

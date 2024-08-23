@@ -8,7 +8,7 @@ def get_db_connection():
             host="gateway01.ap-southeast-1.prod.aws.tidbcloud.com",
             port=4000,
             user="3CHjZydnDAbyLy6.root",
-            password="<PASSWORD>",
+            password="LJIBsOyh00RIQLC0",
             database="play_gm",
             ssl_ca="isrgrootx1.pem",
             ssl_verify_cert=True,
@@ -20,7 +20,7 @@ def get_db_connection():
         return None
 
 
-def similarity_search(embedding, limit=10):
+def similarity_search(embedding, limit=5):
     global similarity_search_cursor
     connection = get_db_connection()
     results = []
@@ -43,6 +43,32 @@ def similarity_search(embedding, limit=10):
         finally:
             if connection.is_connected():
                 similarity_search_cursor.close()
+                connection.close()
+
+    return results
+
+
+def get_all_players():
+    global get_all_players_cursor
+    connection = get_db_connection()
+    results = []
+    if connection:
+        try:
+            get_all_players_cursor = connection.cursor(dictionary=True)
+
+            query = """
+                   SELECT player_name, player_display_name
+                   FROM chess_players
+               """
+
+            get_all_players_cursor.execute(query)
+            results = get_all_players_cursor.fetchall()
+
+        except Error as error:
+            print(f"Error executing query: {error}")
+        finally:
+            if connection.is_connected():
+                get_all_players_cursor.close()
                 connection.close()
 
     return results
