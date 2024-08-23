@@ -1,16 +1,11 @@
-FROM node:14
-
-WORKDIR /play-gm-frontend
-
-COPY package.json package-lock.json ./
+FROM node:alpine AS build
+WORKDIR /app
+COPY . .
 RUN npm install
-
-COPY ./play-gm-frontend .
-
 RUN npm run build
 
 FROM nginx:alpine
-COPY --from=0 /app/build /usr/share/nginx/html
+COPY --from=build /app/build/ /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
-
 CMD ["nginx", "-g", "daemon off;"]
