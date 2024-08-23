@@ -5,7 +5,7 @@ import SideMenu from "./components/SideMenu";
 import {ResultModal, ConfirmationModal} from "./components/Modal"
 
 function App() {
-  const [selectedPlayer, setSelectedPlayer] = useState("Magnus Carlsen");
+  const [selectedPlayer, setSelectedPlayer] = useState("Opponent");
   const [selectedColor, setSelectedColor] = useState("W");
   const [gameStarted, setGameStarted] = useState(false);
   const [notation, setNotation] = useState(''); // State for chess notation

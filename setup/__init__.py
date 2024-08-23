@@ -393,9 +393,9 @@ def store_in_database(player_name, player_rating, opponent_rating, opponent_name
                 # print("for_counter::: "+str(for_counter))
                 print("fen_embedding::: "+str(fen_embedding))
                 cursor.execute("""
-                   INSERT INTO `chess_positions` (`game_id`,`player_color`,`player_fen`,`opponent_fen`,`move_number`,`embedding`) VALUES (%s, %s, %s, %s, %s, %s)
+                   INSERT INTO `chess_positions` (`game_id`,`player_color`,`player_fen`,`opponent_fen`,`move_number`,`embedding`,`player_id`) VALUES (%s, %s, %s, %s, %s, %s, %s)
 
-                   """, (game_id,player_color, players_fen, opponent_fen, for_counter, str(fen_embedding)))
+                   """, (game_id,player_color, players_fen, opponent_fen, for_counter, str(fen_embedding), 1))
 
             update_chess_365_status_query = """
             UPDATE `chess_365_data_status`

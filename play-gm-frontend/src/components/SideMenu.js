@@ -69,6 +69,7 @@ const SideMenu = ({ onStartGame, onReset, gameStarted, notation }) => {
           onChange={(e) => setSelectedPlayer(e.target.value)}
           disabled={gameStarted} // Disable dropdown if game has started
         >
+          <option value="" disabled>Select a Player</option>
           {players.length > 0 ? (
             players.map((player, index) => (
               <option key={index} value={player}>{player}</option>
@@ -100,6 +101,7 @@ const SideMenu = ({ onStartGame, onReset, gameStarted, notation }) => {
           type="button"
           className={`text-white ${gameStarted ? 'bg-red-700 hover:bg-red-800' : 'bg-dark_green hover:bg-blue-800'} font-medium rounded-lg text-sm px-8 py-2.5 mr-2`}
           onClick={gameStarted ? handleResignGame : handleStartGame}
+          disabled={!selectedPlayer} // Disable button if no player is selected
         >
           {gameStarted ? 'Resign' : 'Start'}
         </button>
