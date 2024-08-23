@@ -105,7 +105,7 @@ const PlayerVsComputerChessboard = ({ selectedPlayer, selectedColor, reset, onMo
   return (
     <div className='w-[38%] sm:py-4 float-right'>
       <div className="bg-[#f0d9b5] text-[#b58863] p-2 text-left font-bold">
-        {selectedPlayer} {isThinking && <span className="thinking"></span>}
+        {selectedPlayer} {isThinking && <span className="thinking">is thinking</span>}
       </div>
       <Chessboard
         id="example-chess-board"
@@ -117,7 +117,7 @@ const PlayerVsComputerChessboard = ({ selectedPlayer, selectedColor, reset, onMo
         }}
       />
       <div className="bg-[#f0d9b5] text-[#b58863] p-2 text-left font-bold">
-        Guest
+        You
       </div>
     </div>
   );
