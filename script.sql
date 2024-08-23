@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS `chess_eco` (
 
 
 CREATE TABLE IF NOT EXISTS `chess_positions` (
-  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `id` INT AUTO_INCREMENT,
   `game_id` INT NOT NULL,
   `player_color` char(1),
   `player_fen` VARCHAR(100),
@@ -29,7 +29,19 @@ CREATE TABLE IF NOT EXISTS `chess_positions` (
   `move_number` INT NOT NULL,
   `embedding` vector(384) COMMENT "hnsw(distance=cosine)",
   `player_id` INT NOT NULL
+)PARTITION BY LIST (`player_id`) (
+    PARTITION p1 VALUES IN (1),
+    PARTITION p2 VALUES IN (2),
+    PARTITION p3 VALUES IN (3),
+    PARTITION p4 VALUES IN (4),
+    PARTITION p5 VALUES IN (5),
+    PARTITION p6 VALUES IN (6),
+    PARTITION p7 VALUES IN (7),
+    PARTITION p8 VALUES IN (8),
+    PARTITION p9 VALUES IN (9),
+    PARTITION p10 VALUES IN (10)
 );
+
 
 CREATE TABLE IF NOT EXISTS `chess_players` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
