@@ -73,4 +73,4 @@ CORS(main_router)  # Enable CORS for all routes
 #         return jsonify({"move": str(next_move)}), 200
 
 if __name__ == '__main__':
-    main_router.run(debug=True)
+    main_router.run(host='0.0.0.0',port=5000)

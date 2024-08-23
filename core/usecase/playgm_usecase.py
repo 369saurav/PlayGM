@@ -46,8 +46,8 @@ def make_next_move(fen, move_number, player_colour, player_namer):
     similar_games = similarity_search(str(embedded_data))
     print("Similar_games::: " + str(similar_games))
     print("fen:: " + fen)
-    stockfish_path = "D:/stockfish-windows-x86-64-avx2/stockfish/stockfish-windows-x86-64-avx2.exe"
-    stock_fish_docker_path = "stockfish"
+    # stockfish_path = "D:/stockfish-windows-x86-64-avx2/stockfish/stockfish-windows-x86-64-avx2.exe"
+    stock_fish_docker_path = "/usr/games/stockfish"
     chess_board = chess.Board(fen)
 
     # Check for game over scenarios
@@ -209,8 +209,8 @@ def generate_response(current_fen):
     board = chess.Board(current_fen)
 
     # Define the path to the Stockfish executable
-    stockfish_path = "D:/stockfish-windows-x86-64-avx2/stockfish/stockfish-windows-x86-64-avx2.exe"
-    stock_fish_docker_path = "stockfish"
+    # stockfish_path = "D:/stockfish-windows-x86-64-avx2/stockfish/stockfish-windows-x86-64-avx2.exe"
+    stock_fish_docker_path = "/usr/games/stockfish"
     # Use a context manager to open and close the Stockfish engine
     try:
         with chess.engine.SimpleEngine.popen_uci(stock_fish_docker_path) as engine:
