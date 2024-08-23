@@ -13,7 +13,7 @@ const SideMenu = ({ onStartGame, onReset, gameStarted, notation }) => {
 
   useEffect(() => {
     // Fetch the list of players from the API when the component mounts
-    axios.get('http://localhost:5000/playgm/players')
+    axios.get('http://34.93.65.187:5000/playgm/players')
       .then(response => {
         console.log("API Response:", response.data); // Debugging line
         // Parse and set the players list

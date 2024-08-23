@@ -1,17 +1,16 @@
-version: '3'
-
 services:
   backend:
-    build:
-      dockerfile: Dockerfile
+    image: saurav369/play-gm:backend-0.0.1
+    container_name: backend
+    restart: always
     ports:
-      - "5000:5000"
+    - "5000:5000"
 
   frontend:
-    build:
-      context: ./play-gm-frontend
-      dockerfile: Dockerfile
+    image: saurav369/play-gm:frontend-0.0.1
+    container_name: frontend
+    restart: always
     ports:
-      - "80:80"
+    - "80:80"
     depends_on:
       - backend

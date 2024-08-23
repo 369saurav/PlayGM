@@ -298,7 +298,7 @@ def get_db_connection():
             host="gateway01.ap-southeast-1.prod.aws.tidbcloud.com",
             port=4000,
             user="3CHjZydnDAbyLy6.root",
-            password="<PASSWORD>",
+            password="LJIBsOyh00RIQLC0",
             database="play_gm",
             ssl_ca="isrgrootx1.pem",
             ssl_verify_cert=True,
