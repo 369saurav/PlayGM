@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  backend:
+    build:
+#      context: ./PlayGm
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./PlayGm:/app
+
+#  frontend:
+#    build:
+#      context: ./play-gm-frontend
+#      dockerfile: Dockerfile
+#    ports:
+#      - "80:80"
+#    depends_on:
+#      - backend
