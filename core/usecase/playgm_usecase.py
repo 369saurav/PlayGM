@@ -40,7 +40,7 @@ def evaluate_move_with_stockfish(board, move, stockfish_path):
         return None
 
 
-def make_next_move(fen, move_numbe,player_colour, player_namer):
+def make_next_move(fen, move_number, player_colour, player_namer):
     embedded_data = get_embedding(fen)
     print(str(embedded_data))
     similar_games = similarity_search(str(embedded_data))
@@ -99,7 +99,17 @@ def make_next_move(fen, move_numbe,player_colour, player_namer):
         selected_move = fen_to_move(fen, generate_response(fen))
         print("Fallback to Stockfish:", selected_move)
 
+    # Simulate the move on the board to check if the game is over
+    if selected_move:
+        chess_board.push(chess.Move.from_uci(str(selected_move)))
+        if chess_board.is_game_over():
+            game_result = handle_game_over(chess_board)
+            return f"{selected_move}-{game_result}"
+        else:
+            return selected_move
+
     return selected_move
+
 
 
 def handle_game_over(chess_board):

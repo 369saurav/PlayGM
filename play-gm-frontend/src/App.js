@@ -2,12 +2,16 @@ import React, { useState } from "react";
 import PlayerVsComputerChessboard from "./components/PlayerVsComputerChessboard";
 import "./App.css";
 import SideMenu from "./components/SideMenu";
+import {ResultModal, ConfirmationModal} from "./components/Modal"
 
 function App() {
   const [selectedPlayer, setSelectedPlayer] = useState("Magnus Carlsen");
   const [selectedColor, setSelectedColor] = useState("W");
   const [gameStarted, setGameStarted] = useState(false);
   const [notation, setNotation] = useState(''); // State for chess notation
+  const [score, setScore] = useState('');
+  const [isResultModalOpen, setIsResultModalOpen] = useState(false);
+  const [resultMessage, setResultMessage] = useState('');
 
   const handleStartGame = (player, color) => {
     setSelectedPlayer(player);
@@ -15,9 +19,11 @@ function App() {
     setGameStarted(true); // Set game started state to true
   };
 
-  const handleReset = () => {
+ const handleReset = () => {
     setGameStarted(false); // Set game started state to false
     setNotation(''); // Reset chess notation
+    setScore(''); // Clear score when resetting
+    setIsResultModalOpen(false); // Ensure the result modal is closed
   };
 
   const handleMove = (move) => {
@@ -41,7 +47,27 @@ function App() {
       return newNotation.trim(); // Remove any extra whitespace
     });
   };
+const handleGameOver = (result) => {
+    let message, gameScore;
+    if (result === '1-0') {
+      message = 'White wins by checkmate!';
+      gameScore = 'White Won';
+    } else if (result === '0-1') {
+      message = 'Black wins by checkmate!';
+      gameScore = 'Black Won';
+    } else if (result === 'D') {
+      message = 'The game is a draw.';
+      gameScore = 'Draw';
+    }
 
+   setResultMessage(message);
+    setScore(gameScore);
+    setIsResultModalOpen(true); // Open result modal
+  };
+    const handleCloseResultModal = () => {
+    setIsResultModalOpen(false); // Close result modal
+    handleReset(); // Optionally reset the game state or do other cleanup
+  };
   return (
     <>
       <div className="bg-dark_green pb-4 pt-1 pl-3">
@@ -60,9 +86,17 @@ function App() {
             selectedColor={selectedColor}
             reset={!gameStarted} // Reset board if game is not started
             onMove={handleMove} // Pass handleMove function
+            onGameOver={handleGameOver} // Pass handleGameOver function
+
           />
         </div>
       </div>
+      <ResultModal
+        isOpen={isResultModalOpen}
+        onClose={handleCloseResultModal} // Use the close handler
+        message={resultMessage}
+        score={score}
+      />
     </>
   );
 }

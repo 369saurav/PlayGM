@@ -84,10 +84,12 @@ const SideMenu = ({ onStartGame, onReset, gameStarted, notation }) => {
       </div>
 
       {/* Notation Display Box */}
-      <div className="bg-gray-100 p-4 mt-4 rounded-lg">
-        <h2 className="text-lg font-bold">Chess Notation</h2>
-        <p className="mt-2">{notation}</p>
-      </div>
+      {gameStarted && (
+        <div className="bg-dark_green p-4 mt-4 rounded-lg max-w-sm mx-auto">
+          <h2 className="text-light_brown font-bold">Chess Notation</h2>
+          <p className="mt-2 text-light_brown">{notation}</p>
+        </div>
+      )}
 
       <ConfirmationModal
         isOpen={isConfirmationModalOpen}
